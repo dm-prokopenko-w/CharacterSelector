@@ -1,9 +1,9 @@
-﻿using Game.Configs;
+﻿using Core.UI;
+using Game.Configs;
 using Game.Core;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using VContainer;
 using VContainer.Unity;
 using Object = UnityEngine.Object;
@@ -15,11 +15,9 @@ namespace Game.Character
     {
         [Inject] private ConfigsLoader _configsLoader = null;
         [Inject] private SaveManager _saveManager;
+        [Inject] private UIController _uiController;
 
         public Action<CharacterSave> OnChangeCharacter;
-        public Func<Button> OnInitBntSpawnRandomCharacter;
-        public Func<Transform> OnInitContainer;
-        public Func<Button> OnInitBntDespawnCharacter;
 
         private List<CharacterItemPool> _pools = new List<CharacterItemPool>();
         private int _countCharacter;
@@ -39,9 +37,8 @@ namespace Game.Character
                 return;
             }
 
-            OnInitBntSpawnRandomCharacter?.Invoke().onClick.AddListener(SpawnRandomCharacter);
-            OnInitBntDespawnCharacter?.Invoke().onClick.AddListener(Despawn);
-            _container = OnInitContainer?.Invoke();
+            InitUI();
+
 
             var item = _saveManager.Load<CharacterSave>(Constants.CharacterKey);
             string id = item == null ? _data.Characters[0].Id : item.Id;
@@ -79,6 +76,27 @@ namespace Game.Character
             _saveManager.Delete(Constants.CharacterKey);
             _currentItem.Prefab.SetActive(false);
             _currentItem.Prefab.transform.SetParent(_container);
+        }
+
+        private void InitUI()
+        {
+            var generateBtn = _uiController.GetUIItemById(Constants.GenerateBtn);
+            if (generateBtn != null)
+            {
+                generateBtn.Btn.onClick.AddListener(SpawnRandomCharacter);
+            }
+
+            var clearCharacterViewBtn = _uiController.GetUIItemById(Constants.ClearCharacterViewBtn);
+            if (clearCharacterViewBtn != null)
+            {
+                clearCharacterViewBtn.Btn.onClick.AddListener(Despawn);
+            }
+
+            var container = _uiController.GetUIItemById(Constants.CharacterViewTrans);
+            if (container != null)
+            {
+                _container = container.Tr;
+            }
         }
 
         private void SpawnCharacter(string id, Vector3 pos, Quaternion rot)

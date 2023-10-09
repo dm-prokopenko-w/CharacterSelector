@@ -1,4 +1,5 @@
-﻿using Game.Character;
+﻿using Core.UI;
+using Game.Core;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -8,19 +9,13 @@ namespace Game.UI
     [RequireComponent(typeof(Button))]
     public class BtnClearCharacterView : MonoBehaviour
     {
-        [Inject] private CharacterGenerator _characterGenerator;
+        [Inject] private UIController _uiController;
 
         [SerializeField] private Button _button;
 
         private void Awake()
         {
-            _characterGenerator.OnInitBntDespawnCharacter += InitBtn;
-        }
-
-        private Button InitBtn()
-        {
-            _characterGenerator.OnInitBntDespawnCharacter -= InitBtn;
-            return _button;
+            _uiController.AddUIItem(new UIItem(Constants.ClearCharacterViewBtn, _button));
         }
     }
 }

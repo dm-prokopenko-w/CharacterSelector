@@ -1,28 +1,26 @@
-﻿using Game.Character;
-using System;
+﻿using Core.UI;
+using Game.Character;
 using UnityEngine.UI;
 using VContainer;
 using VContainer.Unity;
 
 namespace Game.Core
 {
-
     public class GameManager : IStartable
     {
         [Inject] private SceneLoader _sceneLoader;
         [Inject] private CharacterGenerator _characterGenerator;
-
-        public Func<(Button, int)> OnInitBntPlayGame;
+        [Inject] private UIController _uiController;
 
         private Button _buttonPlay;
 
         public void Start()
         {
-            if (OnInitBntPlayGame != null)
+            var item = _uiController.GetUIItemById(Constants.SceneLoaderBtn);
+            if (item != null)
             {
-                (Button, int) parm = OnInitBntPlayGame.Invoke();
-                _buttonPlay = parm.Item1;
-                _buttonPlay.onClick.AddListener(() => LoadScene(parm.Item2));
+                _buttonPlay = item.Btn;
+                item.Btn.onClick.AddListener(() => LoadScene(item.Num));
             }
 
             _characterGenerator.OnChangeCharacter += ChangeCharacter;

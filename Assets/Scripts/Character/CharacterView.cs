@@ -1,21 +1,17 @@
 ﻿using VContainer;
 using UnityEngine;
+using Core.UI;
+using Game.Core;
 
 namespace Game.Character
 {
     public class CharacterView : MonoBehaviour
     {
-        [Inject] private CharacterGenerator _characterGenerator;
+        [Inject] private UIController _uiController;
 
         private void Awake()
         {
-            _characterGenerator.OnInitContainer += InitContainer;
-        }
-
-        private Transform InitContainer()
-        {
-            _characterGenerator.OnInitContainer -= InitContainer;
-            return transform;
+            _uiController.AddUIItem(new UIItem(Constants.CharacterViewTrans, transform));
         }
     }
 }
